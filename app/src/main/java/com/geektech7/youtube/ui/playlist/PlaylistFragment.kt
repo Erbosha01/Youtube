@@ -4,16 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.geektech7.youtube.base.BaseFragment
 import com.geektech7.youtube.data.domain.Resource
 import com.geektech7.youtube.databinding.FragmentPlaylistBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistFragment : BaseFragment<FragmentPlaylistBinding, PlaylistViewModel>() {
 
-    override val viewModel: PlaylistViewModel by lazy {
-        ViewModelProvider(this)[PlaylistViewModel::class.java]
-    }
+    override val viewModel: PlaylistViewModel by viewModel()
 
     override fun inflateViewBinding(
         layoutInflater: LayoutInflater,
@@ -25,18 +23,7 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding, PlaylistViewModel
 
     override fun initView() {
 
-        viewModel.getPlaylist()
-
-        viewModel.playlist.observe(viewLifecycleOwner) {
-            viewModel.progress.value = it.status == Resource.Status.LOADING
-            when (it.status) {
-                Resource.Status.SUCCESS -> {
-                    it.data?.let { it1 -> viewModel.setPlaylist(it1) }
-                }
-                Resource.Status.ERROR -> {
-                }
-            }
-        }
+        viewModel.getLocalPlaylist()
 
         viewModel.localPlaylist.observe(viewLifecycleOwner) {
             if (it.status == Resource.Status.SUCCESS) {
@@ -47,12 +34,6 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding, PlaylistViewModel
 
         viewModel.progress.observe(viewLifecycleOwner) {
             binding.progress.isVisible = it
-        }
-
-        viewModel.setPlaylist.observe(viewLifecycleOwner) {
-            if(it.status == Resource.Status.SUCCESS && it.data == true) {
-                viewModel.getLocalPlaylist()
-            }
         }
 
     }

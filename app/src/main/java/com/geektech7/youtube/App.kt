@@ -1,20 +1,22 @@
 package com.geektech7.youtube
 
 import android.app.Application
-import androidx.room.Room
-import com.geektech7.youtube.data.local.room.AppDataBase
+import com.geektech7.youtube.data.network.networkModule
+import com.geektech7.youtube.di.repoModule
+import com.geektech7.youtube.di.roomModule
+import com.geektech7.youtube.di.viewModelModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 
 class App: Application() {
 
-    companion object {
-        lateinit var db: AppDataBase
-    }
-
     override fun onCreate() {
         super.onCreate()
-        db = Room.databaseBuilder(applicationContext, AppDataBase::class.java, "database")
-            .allowMainThreadQueries()
-            .build()
+        startKoin {
+            androidContext(this@App)
+            modules(listOf(networkModule, roomModule, repoModule, viewModelModule))
+        }
     }
+
 }

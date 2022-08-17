@@ -8,20 +8,9 @@ import com.geektech7.youtube.data.domain.Resource
 import com.geektech7.youtube.data.repository.Repository
 import com.geektech7.youtube.model.Playlist
 
-class PlaylistViewModel: BaseViewModel() {
-    private val repo = Repository()
+class PlaylistViewModel(private val repo: Repository): BaseViewModel() {
 
-    private val _playlist = MutableLiveData<Playlist>()
-    private val _result = MutableLiveData<Boolean>()
     private val _local = MutableLiveData<Boolean>()
-
-    val playlist = _result.switchMap {
-        repo.getPlaylist()
-    }
-
-    val setPlaylist = _playlist.switchMap {
-        repo.setPlaylist(it)
-    }
 
     val localPlaylist = _local.switchMap {
         repo.getLocalPlaylist()
@@ -29,14 +18,6 @@ class PlaylistViewModel: BaseViewModel() {
 
     fun getLocalPlaylist() {
         _local.value = true
-    }
-
-    fun getPlaylist() {
-        _result.value = true
-    }
-
-    fun setPlaylist(playlist: Playlist) {
-        _playlist.value = playlist
     }
 
 }
